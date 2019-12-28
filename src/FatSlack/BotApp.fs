@@ -91,4 +91,5 @@ let start config =
         let connectResponse = getBotInfo apiToken
         let slackApi = SlackApi.createSlackApi apiToken
         startListen config.Commands config.Alias connectResponse slackApi
+        slackApi
     | None -> raise (exn "ApiToken is required for bot")
