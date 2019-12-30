@@ -42,10 +42,10 @@ module Helpers =
         | SlackCommand sc ->
             match isAdressedBot alias botId event with
             | NotAddressedToBot -> 
-                printfn "==> NotAddresedBot: %A" event
+                tracefn "==> NotAddresedBot: %A" event
                 false
             | AddressedToBot commandText ->
-                printfn "==> AddressedBot: %A" commandText
+                tracefn "==> AddressedBot: %A" commandText
                 sc.EventMatcher commandText event
 
     let handleCommand slackApi event command =
@@ -55,19 +55,19 @@ module Helpers =
 
 let getBotInfo token =
     let connectUrl = sprintf "https://slack.com/api/rtm.connect?token=%s" token
-    printfn "Connecting to: %A" connectUrl
+    tracefn "Connecting to: %A" connectUrl
     connectUrl
     |> Http.downloadJsonObject<ConnectResponse>
-    |> (fun x -> printfn "Connected: %A" x; x)
+    |> (fun x -> tracefn "Connected: %A" x; x)
 
 let startListen commands alias connectResponse slackApi =
     let deserializeEvent = Json.deserialize<Event>
     let execute (event: Event) (command: BotCommand) =
         async {
-            printfn "==> Checking match: %A" event
+            tracefn "==> Checking match: %A" event
             if command |> isMatchingCommand alias (connectResponse.Self.Id) event
             then
-                printfn "==> Handling: %A" event
+                tracefn "==> Handling: %A" event
                 command |> handleCommand slackApi event
         }
 

@@ -18,7 +18,7 @@ let parse str =
         Some (JObject.Parse(str))
     with
     | ex -> 
-        printfn "Failed to parse: %s" str    
+        tracefn "Failed to parse: %s" str    
         None
 let getValue key (jObj:JObject) = 
     if jObj.[key] |> isNull then None

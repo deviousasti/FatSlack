@@ -69,9 +69,9 @@ module Http =
             let contentType = ContentType.getContentType body
             let data = body.toData
             let uri = Uri(url)
-            printfn "The data to be sent: %A" data
-            printfn "Content-Type: %A" contentType
-            printfn "Uri: %A" uri
+            tracefn "The data to be sent: %A" data
+            tracefn "Content-Type: %A" contentType
+            tracefn "Uri: %A" uri
             let! result =
                 ("Content-Type", contentType) :: headers
                 |> List.iter (fun (k,v) -> webClient.Headers.Add(k,v))
@@ -86,9 +86,9 @@ module Http =
             let contentType = ContentType.getContentType body
             let data = body.toData
             let uri = Uri(url)
-            printfn "The data to be sent: %A" data
-            printfn "Content-Type: %A" contentType
-            printfn "Uri: %A" uri
+            tracefn "The data to be sent: %A" data
+            tracefn "Content-Type: %A" contentType
+            tracefn "Uri: %A" uri
             [("Content-Type", contentType)]
             |> List.iter (fun (k,v) -> webClient.Headers.Add(k,v))
             webClient.UploadStringAsync(uri, data :?> string)
@@ -123,7 +123,7 @@ module WebSocket =
                 let messageString = data + System.Text.Encoding.UTF8.GetString(messageBytes)
                 if message.EndOfMessage
                 then
-                    printfn "End of message :%A" messageString
+                    tracefn "End of message :%A" messageString
                     messageString
                     |> messageHandler
                     |> Async.Start
@@ -136,7 +136,7 @@ module WebSocket =
     let connect<'T> (messageHandler: HandleWebsocketMessage) url = 
         let rec innerConnect() =
             async {
-                printfn "Websocket connect: %s" url
+                tracefn "Websocket connect: %s" url
                 let socket = new System.Net.WebSockets.ClientWebSocket()
                 let uri = Uri(url)
                 let! ct = Async.CancellationToken
@@ -148,10 +148,10 @@ module WebSocket =
             async {
                 match socket.State with
                 | WebSocketState.Open -> 
-                    printfn "Websocket connection opened"
+                    tracefn "Websocket connection opened"
                     return listen messageHandler socket
                 | WebSocketState.Connecting ->
-                    printfn "Websocket connecting"
+                    tracefn "Websocket connecting"
                     do! Async.Sleep 10000
                     return! waitForConnection socket
                 | WebSocketState.Aborted

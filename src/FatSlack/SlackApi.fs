@@ -7,9 +7,9 @@ let sendMessage url token (data: obj) =
     let authorizationHeader = sprintf "Bearer %s" token
     async {
         let jsonPayload = (Http.JsonData payload)
-        printfn "==> Posting: %A" jsonPayload
+        tracefn "==> Posting: %A" jsonPayload
         let! response = Http.postJson [("Authorization", authorizationHeader)] url jsonPayload
-        printfn "==> Raw response: %A" response
+        tracefn "==> Raw response: %A" response
         let result =
             match response with
             | "ok" -> OkResponse None
